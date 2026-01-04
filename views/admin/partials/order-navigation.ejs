@@ -1,0 +1,21 @@
+<div class="flex gap-2 justify-center items-center">
+    <% if (maxPage != 1) { %>
+        <div>
+            <div class="flex gap-2">
+                 <% if (page > 1) { %>
+                    <a href="/manage/<%= campaign.id %>/orders/?page=<%= page-1 %>" class="text-gray-700 px-2 py-1 text-2 rounded bg-gray-100 hover:bg-gray-300">&larr;</a>
+                <% } %>
+                <% for( let p = 1; p <= maxPage; p++) { %>
+                    <a href="/manage/<%= campaign.id %>/orders/?page=<%= p %>" class="text-gray-700 px-2 py-1 text-2 rounded bg-gray-100 hover:bg-gray-300 <% if (p == page) { %> bg-gray-300 hover:bg-gray-400 <% } %>"><%= p %></a>
+                <% } %>
+                <% if (page < maxPage) { %>
+                    <a href="/manage/<%= campaign.id %>/orders/?page=<%= page+1 %>" class="text-gray-700 px-2 py-1 text-2 rounded bg-gray-100 hover:bg-gray-300">&rarr;</a>
+                <% } %>
+            </div>
+        </div>
+
+
+    <% } %>
+    <a href="/manage/<%= campaign.id  %>/download/" class="ml-auto bg-blue-500 text-white text-m px-2 py-1 rounded hover:bg-blue-600 transition duration-200 md:hidden">Export</a>
+    <a href="/manage/<%= campaign.id  %>/download/" class="ml-auto bg-blue-500 text-white text-m px-2 py-1 rounded hover:bg-blue-600 transition duration-200 max-md:hidden">Export as CSV</a>
+</div>

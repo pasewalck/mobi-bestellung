@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard for "<%= campaign.name %>"</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-md md:rounded-lg max-md:w-full py-8 p-8 max-w-full">
+        <h1 class="text-3xl font-bold mb-6 text-center">Dashboard for "<%= campaign.name %>"</h1>
+
+        <div class="orders-section">
+            <% if (orderCount> 0) { %>
+                <p class="text-gray-700 text-center">Total Orders: <strong><%= orderCount %></strong></p>
+            <% } else { %>
+                <p class="text-gray-700 text-center">No orders have been placed for this campaign yet.</p>
+            <% } %>
+        </div>
+
+        <div class="actions mt-6">
+            <div class="flex flex-row gap-6 items-center justify-center">
+                <a href="/manage/<%= campaign.id %>/orders" class="text-blue-500 hover:underline">View Orders</a>
+                <a href="/manage/<%= campaign.id %>/items" class="text-blue-500 hover:underline">Manage Items</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

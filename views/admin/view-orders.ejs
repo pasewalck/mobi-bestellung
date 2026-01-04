@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders for "<%= campaign.name %>"</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<script>
+    function updateStatusColor(orderId) {
+        document.getElementById(`${orderId}-status`).style.backgroundColor = {
+            "open": "#f6e58d",
+            "sent": "#9ff3ff",
+            "complete": "#acffa7",
+            "failed": "#f06e71",
+            "resent": "#9ff3ff",
+            "cancelled": "#deb2b3",
+        }[document.getElementById(`${orderId}-status`).value]
+    }
+    async function updateOrderStatusAndNotes(orderId) {
+        const formData = new FormData();
+        formData.append('status', document.getElementById(`${orderId}-status`).value);
+        formData.append('notes', document.getElementById(`${orderId}-notes`).value);
+
+        try {
+            const response = await fetch(`/api/manage/<%= campaign.id %>/orders/update/${orderId}/`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.text();
+            console.log('Status updated successfully:', data);
+        } catch (error) {
+            console.error('There was a problem updating the status:', error);
+        }
+    }
+</script>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-md md:rounded-lg max-md:w-full py-8 p-8 min-w-9/10">
+        <h1 class="text-3xl font-bold mb-6 text-center">Orders for "<%= campaign.name %>"</h1>
+
+        <div class="flex flex-col gap-3">
+            <%- include('partials/order-navigation') %>
+
+            <div class="rounded overflow-x-auto">
+                <table class="min-w-full bg-white shadow-md rounded-lg">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-600 text-sm leading-normal">
+                            <th class="py-3 px-6 text-left">Who is ordering?</th>
+                            <th class="py-3 px-6 text-left">Order Email</th>
+                            <th class="py-3 px-6 text-left">Date</th>
+                            <th class="py-3 px-6 text-left">Address</th>
+                            <th class="py-3 px-6 text-left">Status</th>
+                            <th class="py-3 px-6 text-left">Notes</th>
+                            <th class="py-3 px-6 text-left">Items</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-600 text-sm font-light">
+                        <% orders.forEach(order=> { %>
+                            <tr class="border-b-2 border-gray-300 hover:bg-gray-100">
+                                <td class="py-3 px-6">
+                                    <%= order.details.whoIsOrdering %>
+                                </td>
+                                <td class="py-3 px-6">
+                                    <%= order.details.email %>
+                                </td>
+                                <td class="py-3 px-6">
+                                    <%= new Date(order.time).toLocaleDateString() %>
+                                </td>
+                                <td class="py-3 px-6 group">
+                                        <%= order.address.name %>,
+                                        <%= order.address.street %>
+                                        <%= order.address.streetNumber %>,
+                                        <%= order.address.city %>
+                                        <%= order.address.postalCode %>,
+                                        <%= order.address.country %>s
+                                </td>
+                                <td class="py-3 px-6">
+                                    <select class="p-1 rounded-md" id="<%= order.id %>-status">
+                                        <option value="open">Open</option>
+                                        <option value="sent">Sent</option>
+                                        <option value="complete">Complete</option>
+                                        <option value="failed">Failed</option>
+                                        <option value="resent">Resent</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </select>
+                                    <script>
+                                        document.getElementById("<%= order.id %>-status").onchange = () => {
+                                            updateOrderStatusAndNotes('<%= order.id %>')
+                                            updateStatusColor('<%= order.id %>')
+                                        }
+                                        document.getElementById("<%= order.id %>-status").value = '<%= order.status ? order.status : "open" %>'
+                                        updateStatusColor('<%= order.id %>')
+                                    </script>
+                                </td>
+                                <td class="py-3 px-6">
+                                    <textarea class="border-gray-300 border-[calc(1px)]" name="" onchange="updateOrderStatusAndNotes('<%= order.id %>')" id="<%= order.id %>-notes">
+                                    </textarea>
+                                    <script>
+                                        document.getElementById("<%= order.id %>-notes").value = "<%= order.notes %>"
+                                    </script>
+                                </td>
+                                <td class="py-3 px-6">
+                                    <% order.items.forEach(item=> { %>
+                                        <p>
+                                            <%= item.quantity %>x <%= item.name %>
+                                        </p>
+                                    <% }) %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <%- include('partials/order-navigation') %>
+
+
+        </div>
+
+        <div class="actions mt-6">
+            <div class="flex flex-row gap-2 items-center justify-center">
+                <a href="/manage/<%= campaign.id  %>/" class="text-blue-500 hover:underline">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+
+</html>

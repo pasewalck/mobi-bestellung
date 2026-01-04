@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> <%= item ? 'Edit Item' : 'Add Item' %> </title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-md md:rounded-lg max-md:w-full py-8 p-8 max-w-full">
+        <h1 class="text-2xl font-bold mb-4">
+            <%= item ? 'Edit Item' : 'Add New Item' %>
+        </h1>
+        <form action="/manage/<%= campaignId %>/items/<%= item ? item.id : 'add' %>" method="POST" enctype="multipart/form-data">
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-gray-700">Item Name:</label>
+                <input type="text" id="name" name="name" value="<%= item ? item.name : '' %>" required
+                    class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            </div>
+            <div class="mb-4">
+                <label for="minQuantity" class="block text-sm font-medium text-gray-700">Minimum Quantity:</label>
+                <input type="number" id="minQuantity" name="minQuantity" value="<%= item ? item.minQuantity : '' %>"
+                    required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            </div>
+            <div class="mb-4">
+                <label for="maxQuantity" class="block text-sm font-medium text-gray-700">Maximum Quantity:</label>
+                <input type="number" id="maxQuantity" name="maxQuantity" value="<%= item ? item.maxQuantity : '' %>"
+                    required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            </div>
+
+            <div class="mb-4">
+                <label for="image" class="block text-sm font-medium text-gray-700">Image:</label>
+
+                <div class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                    <div class="relative inline-block transform rotate-3 rounded-md  bg-gray-400" id="previewImageDiv" <% if(!item) { %> style="display: none;" <% } %> >
+                        <img src="/uploads/<%= item ? item.imageName : "none" %>" alt="" class="block shadow-2xl rounded-md w-16 opacity-70" id="previewImage">
+                        <div class="absolute group -right-2 -bottom-1 w-6 h-6 p-1.5 z-10 rounded-md duration-200 bg-white hover:bg-gray-950">
+                            <div class="relative w-full h-full top-0 left-0 transform -rotate-3">
+                                <div class="absolute duration-200 bg-gray-950 group-hover:bg-white top-1/2 left-1/2 w-full h-[calc(1px)] transform -translate-x-1/2 -translate-y-1/2 -rotate-45"></div>
+                                <div class="absolute duration-200 bg-gray-950 group-hover:bg-white top-1/2 left-1/2 w-full h-[calc(1px)] transform -translate-x-1/2 -translate-y-1/2 rotate-45 "></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label for="image" id="image-label" class='text-gray-600' <% if(item) { %> style="display: none;" <% } %>>Select file ...</label>
+                    <input type="file" id="image" name="image" style="display: none;" accept="image/png, image/gif, image/jpeg" >
+                </div>
+                <style>
+
+                </style>
+            </div>
+
+            <script>
+                function previewImage(event) {
+                    const file = event.target.files[0];
+                    document.getElementById('previewImageDiv').style.display = ""
+
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const img = document.getElementById('previewImage');
+                        img.src = e.target.result;
+                        document.getElementById('image-label').style.display = "none"
+                    }
+
+                    if (file) {
+                        reader.readAsDataURL(file);
+                    }
+                }
+
+                function removeImage() {
+                    document.getElementById('image-label').style.display = ""
+                    document.getElementById('previewImageDiv').style.display = "none"
+
+                    const img = document.getElementById('previewImage');
+                    img.src = ''; // Clear the image
+                    document.getElementById('image').value = ''; // Clear the file input
+                }
+
+                document.getElementById('previewImageDiv').addEventListener("click", removeImage)
+                document.getElementById('image').addEventListener("change", previewImage)
+            </script>
+
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block hover:bg-blue-600 transition duration-200">
+                <%= item ? 'Update Item' : 'Add Item' %>
+            </button>
+        </form>
+        <a href="/manage/<%= campaignId %>/items" class="text-blue-500 mt-4 inline-block">Back to Items</a>
+    </div>
+</body>
+
+</html>

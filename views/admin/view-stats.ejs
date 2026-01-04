@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics for "<%= campaign.name %>"</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0">
+    </script>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-md md:rounded-lg max-md:w-full py-8 p-8 max-w-full">
+        <h1 class="text-3xl font-bold mb-6 text-center">Analytics for "<%= campaign.name %>"</h1>
+
+        <div class="flex flex-col gap-3 justify-center items-center">
+            <div class="flex gap-3 flex-row justify-center items-center w-full md:w-170 bg-gray-100 p-4 rounded-2xl overflow-x-scroll">
+                <div class="w-60">
+                    <canvas id="orderCities"></canvas>
+                </div>
+                <div class="w-60">
+                    <canvas id="orderItems"></canvas>
+                </div>
+            </div>
+            <div class="w-full md:w-170 bg-gray-100 p-4 rounded-2xl overflow-x-scroll">
+                <div class="w-170">
+                    <canvas id="orderHistory"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="actions mt-6">
+            <div class="flex flex-row gap-2 items-center justify-center">
+                <a href="/manage/<%= campaign.id  %>/" class="text-blue-500 hover:underline">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+<script>
+    const orders = JSON.parse(`<%- JSON.stringify(orders) %>`)
+
+    const cities = {}
+    const items = {}
+
+    const firstOrder = new Date(orders[0].time)
+    const byThirtyDaysAgoData = []
+    for (let day = 0; day < 30; day++) {
+        byThirtyDaysAgoData.push(0)
+    }
+
+    orders.forEach(order => {
+        const city = order.address.city
+        const daysAgo = (Math.round(Math.abs(new Date() - new Date(order.time)) / (24 * 60 * 60 * 1000)))
+        if (byThirtyDaysAgoData.length > daysAgo)
+            byThirtyDaysAgoData[daysAgo] += 1
+
+        order.items.forEach(item => {
+            items[item.name] = (items[item.name] | 0) + item.quantity
+        });
+        cities[city] = (cities[city] | 0) + 1
+    });
+
+    new Chart("orderCities", {
+        type: "pie",
+        data: {
+            labels: Object.keys(cities),
+            datasets: [{
+                data: Object.values(cities)
+            }]
+        }
+    });
+
+    new Chart("orderItems", {
+        type: "pie",
+        data: {
+            labels: Object.keys(items),
+            datasets: [{
+                data: Object.values(items)
+            }]
+        }
+    });
+
+    new Chart("orderHistory", {
+        type: "bar",
+        data: {
+            labels: Array.from({ length: byThirtyDaysAgoData.length }, (_, i) => i).map(day => `${day} days ago`),
+            datasets: [{
+                data: byThirtyDaysAgoData
+            }]
+        }
+    });
+
+</script>
+
+
+</html>

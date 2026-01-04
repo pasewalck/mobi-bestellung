@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Items</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-md md:rounded-lg md:my-10 max-md:w-full py-8 p-8 max-w-full">
+        <h1 class="text-3xl font-bold mb-6 text-center">Order Items</h1>
+
+        <form action="/o/<%= campaignId %>" method="POST">
+
+            <fieldset class="mb-6 border border-gray-300 rounded-lg p-4">
+                <legend class="text-xl font-semibold text-gray-700">Details</legend>
+                <div class="flex flex-col gap-4">
+                    <input type="email" id="email" name="email" placeholder="Email" required
+                        class="p-2 border border-gray-300 rounded">
+                    <input type="text" id="whoIsOrdering" name="whoIsOrdering" placeholder="Who is ordering?" required
+                        class="p-2 border border-gray-300 rounded">
+                </div>
+            </fieldset>
+
+            <fieldset class="mb-6 border border-gray-300 rounded-lg p-4">
+                <legend class="text-xl font-semibold text-gray-700">Address</legend>
+                <div id="contactInfo" class="flex flex-col gap-4">
+                    <input type="text" id="name" name="name" placeholder="Name (Reachable by post)" required
+                        class="p-2 border border-gray-300 rounded">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <input type="text" id="street" name="street" placeholder="Street" required
+                            class="flex-1 p-2 border border-gray-300 rounded">
+                        <input type="text" id="streetNumber" name="streetNumber" placeholder="Street Number" required
+                            class="p-2 sm:w-35 border border-gray-300 rounded">
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <input type="text" id="postalCode" name="postalCode" placeholder="Postal Code" required
+                            class="sm:w-30 p-2 border border-gray-300 rounded">
+                        <input type="text" id="city" name="city" placeholder="City" required
+                            class="flex-1 p-2 border border-gray-300 rounded">
+                    </div>
+                    <input type="text" id="country" name="country" placeholder="Country" required
+                        class="p-2 border border-gray-300 rounded">
+                </div>
+            </fieldset>
+
+            <fieldset class="mb-6 border border-gray-300 rounded-lg p-4">
+                <legend class="text-xl font-semibold text-gray-700">Select Items</legend>
+                <% items.forEach(function(item) { %>
+                    <div class="item border border-gray-300 rounded-lg p-4 mb-4 gap-2 flex flex-col sm:flex-row items-start">
+                        <img src="/uploads/<%= item.imageName %>" alt="<%= item.name %>" class="w-24 object-cover mr-4">
+                        <div class="item-details flex flex-col gap-1">
+                            <p class="text-lg font-semibold text-gray-800">
+                                <%= item.name %>
+                            </p>
+                            <div class="quantity-package flex gap-1 items-center justify-between">
+                                <label for="quantity-<%= item.id %>" class="text-sm">Quantity:</label>
+                                <input type="range" id="quantity-<%= item.id %>" name="quantities-<%= item.id %>"
+                                    min="<%= item.minQuantity %>" max="<%= item.maxQuantity %>" value="<%= item.minQuantity %>" class="w-full slider-custom"
+                                    oninput="this.nextElementSibling.value = this.value">
+                                <output class="w-3"><%= item.maxQuantity %></output>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+            </fieldset>
+
+            <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-500 transition duration-300">Order</button>
+        </form>
+    </div>
+</body>
+
+</html>

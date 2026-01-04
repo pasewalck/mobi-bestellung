@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+.slider-custom {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: oklch(87.2% 0.01 258.338);
+    outline: none;
+    margin-top: 1px;
+}
+
+.slider-custom::-webkit-slider-thumb,
+.slider-custom::-moz-range-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    outline: none;
+    border: none;
+    -webkit-transition: .2s;
+    transition: all .2s;
+    background: oklch(62.7% 0.194 149.214);
+    cursor: pointer;
+}
+
+
+.slider-custom:hover::-webkit-slider-thumb,
+.slider-custom:hover::-moz-range-thumb {
+    background: oklch(70% 0.194 149.214);
+}
